@@ -11,8 +11,13 @@ class PointsController {
         if (!point) {
             return response.status(400).json({ message: 'Ponto de coleta não encontrado' })
         }
+        //join com tabela items
+        const items = await knex('items')
+            .join('point_items', 'items.id', '=', 'point_items.item_id')
+            .where('point_items.point_id', id)
+            .select('items.tilte');
 
-        return response.json(point)
+        return response.json({ point, items });
     }
 
     async create (request: Request, response: Response) {

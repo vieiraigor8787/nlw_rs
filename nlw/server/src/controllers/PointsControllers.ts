@@ -2,6 +2,10 @@ import { Request, Response } from 'express';
 import knex from '../database/connection';
 
 class PointsController {
+    //filtrar ponto específico
+    async index(request: Request, response: Response) {
+
+    }
     //buscar ponto de coleta
     async show(request: Request, response: Response) {
         const { id } = request.params;
@@ -15,7 +19,7 @@ class PointsController {
         const items = await knex('items')
             .join('point_items', 'items.id', '=', 'point_items.item_id')
             .where('point_items.point_id', id)
-            .select('items.tilte');
+            .select('items.title');
 
         return response.json({ point, items });
     }

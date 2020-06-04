@@ -4,7 +4,7 @@ export async function up(knex: Knex) {
     //CRIAR TABELA
     return knex.schema.createTable('points', table => {
         table.increments('id').primary();
-        table.string('icon'). notNullable();
+        table.string('icon').notNullable();
         table.string('name').notNullable();
         table.string('email').notNullable();
         table.string('whatsapp').notNullable();

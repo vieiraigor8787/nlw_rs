@@ -1,12 +1,47 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { FiArrowLeft } from 'react-icons/fi';
 import { Map, TileLayer, Marker } from 'react-leaflet';
+import axios from 'axios';
+import api from '../../services/api';
 
 import './styles.css';
 import logo from '../../assets/logo.svg';
 
-const CreatePoint = () => {
+//array ou objeto manualmente tem que informar o tipo da variável
+
+interface Item {
+    id: number;
+    name: string;
+    icon_url: string;
+}
+
+interface IBGEUFInterface {
+    sigla: string;
+}
+
+const CreatePoint = () => { 
+    const [items, setItems] = useState<Item[]>([])
+    const [ufs, setUfs] = useState<string[]>([])
+
+    useEffect(() => {
+        api.get('items').then(response => {
+            setItems(response.data)
+        })
+    }, []);
+
+    useEffect(() => {
+        axios.get<IBGEUFInterface[]>('https://servicodados.ibge.gov.br/api/v1/localidades/estados').then(response => {
+            const ufName = response.data.map(uf => uf.sigla);
+
+            setUfs(ufName)
+        })
+    }, []);
+    //carregar as cidades quando a UF for escolhida
+    useEffect(() => {
+
+    })
+
     return (
         <div id="page-create-point">
             <header>
@@ -74,6 +109,9 @@ const CreatePoint = () => {
                           <label htmlFor="uf">Estado (UF)</label>
                           <select name="uf" id="uf">
                               <option value="0">Selecione uma UF</option>
+                              {ufs.map(uf => (
+                                <option key={uf} value={uf}>{uf}</option>
+                              ))}
                           </select>
                         </div>
                         <div className="field">
@@ -92,24 +130,12 @@ const CreatePoint = () => {
                     </legend>
 
                     <ul className="items-grid">
-                        <li>
-                            <img src="http://localhost:3333/uploads/oleo.svg" alt="teste"/>
-                        </li>
-                        <li className="selected">
-                            <img src="http://localhost:3333/uploads/oleo.svg" alt="teste"/>
-                        </li>
-                        <li>
-                            <img src="http://localhost:3333/uploads/oleo.svg" alt="teste"/>
-                        </li>
-                        <li>
-                            <img src="http://localhost:3333/uploads/oleo.svg" alt="teste"/>
-                        </li>
-                        <li>
-                            <img src="http://localhost:3333/uploads/oleo.svg" alt="teste"/>
-                        </li>
-                        <li>
-                            <img src="http://localhost:3333/uploads/oleo.svg" alt="teste"/>
-                        </li>
+                        {items.map(item => (
+                          <li>
+                            <img src={item.icon_url} alt={item.name}/>
+                            <span>{item.name}</span>
+                          </li>
+                        ))}
                     </ul>
                 </fieldset>
 
